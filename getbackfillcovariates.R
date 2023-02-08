@@ -48,17 +48,36 @@ detection <- raw %>%
 
 #C. ADD COVARIATE DATA####
 
-
 #1. Load----
 load("G:/My Drive/ABMI/Projects/BirdModels/Data/2wrangled.Rdata")
 
+#2. Make current veg objects joinable----
+#proportion of vegetation variables from ABMI backfill layer in 150m radius
+vc150 <- as.data.frame(as.matrix(vc1)) %>%
+    rename_with(.fn=~paste0(.x, "_150m")) %>%
+    mutate(id = rownames(vc1)) %>%
+    separate(id, into=c("location", "year", "date"), sep="_") %>%
+    dplyr::select(-date) %>%
+    mutate(year = as.numeric(year)) %>%
+    unique()
+
+#proportion of vegetation variables from ABMI backfill layer in 564m radius
+vc564 <- as.data.frame(as.matrix(vc2)) %>%
+    rename_with(.fn=~paste0(.x, "_564m")) %>%
+    mutate(id = rownames(vc2)) %>%
+    separate(id, into=c("location", "year", "date"), sep="_") %>%
+    dplyr::select(-date) %>%
+    mutate(year = as.numeric(year)) %>%
+    unique()
 
 #3. Put covariates together----
-covs <- dd %>%
-    rename(location=SS, year = YEAR, equipment = EQUIP) %>%
-    dplyr::select(location, year, AHM, FFP, MAP, MAT, MCMT, MWMT, PET, pAspen, NRNAME, NSRNAME, LUF_NAME, equipment) %>%
-    right_join(visit)
-
+covariate <- dd %>%
+    rename(location=SS, year = YEAR) %>%
+    dplyr::select(location, year, AHM, FFP, MAP, MAT, MCMT, MWMT, PET, pAspen, NRNAME, NSRNAME, LUF_NAME) %>%
+    unique() %>%
+    right_join(visit) %>%
+    left_join(vc150) %>%
+    left_join(vc564)
 
 #D. SAVE####
 save(detection, covariate, file.path(root, "RUGR - BU LAB PROJECT - detections & ABMI covariates.Rdata"))
