@@ -71,13 +71,13 @@ vc564 <- as.data.frame(as.matrix(vc2)) %>%
     unique()
 
 #3. Put covariates together----
-covariate <- dd %>%
-    rename(location=SS, year = YEAR) %>%
-    dplyr::select(location, year, AHM, FFP, MAP, MAT, MCMT, MWMT, PET, pAspen, NRNAME, NSRNAME, LUF_NAME) %>%
-    unique() %>%
-    right_join(visit) %>%
+covariate <- visit %>%
+    left_join(dd %>%
+                  rename(location=SS, year = YEAR) %>%
+                  dplyr::select(location, year, AHM, FFP, MAP, MAT, MCMT, MWMT, PET, pAspen, NRNAME, NSRNAME, LUF_NAME) %>%
+                  unique()) %>%
     left_join(vc150) %>%
     left_join(vc564)
 
 #D. SAVE####
-save(detection, covariate, file.path(root, "RUGR - BU LAB PROJECT - detections & ABMI covariates.Rdata"))
+save(detection, covariate, file=file.path(root, "RUGR - BU LAB PROJECT - detections & ABMI covariates.Rdata"))
