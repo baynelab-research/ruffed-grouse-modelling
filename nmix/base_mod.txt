@@ -1,0 +1,23 @@
+model{
+
+	alpha ~ dnorm(0, 1e-3) # detection probability intercept
+	lambda ~ dunif(0,upperbound)
+	upperbound ~ dunif(0,20)
+		
+	for(q in 1:n_cov) 
+		{
+			beta[q]~dnorm(0,1e-3)
+		}
+
+	for(q in 1:sites) 
+		{
+		betasite[q]~dnorm(0,1e-3)
+		for(w in 1:obspersite[q]) 
+			{
+			z[q,w] ~ dpois(lambda)
+			logit(p[q,w]) <- alpha + betasite[q] + beta[1]*cov[q,w,1] + beta[2]*cov[q,w,2] + beta[3]*cov[q,w,3] + beta[4]*cov[q,w,4] + beta[5]*cov[q,w,5] + beta[6]*cov[q,w,6] + beta[7]*cov[q,w,7] + beta[8]*cov[q,w,8] + beta[9]*cov[q,w,9] + beta[10]*cov[q,w,10]
+			det[q,w] ~ dpois(p[q,w]*z[q,w]) 
+			}
+		}
+
+}
