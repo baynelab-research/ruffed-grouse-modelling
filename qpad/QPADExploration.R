@@ -159,6 +159,8 @@ ggplot(pred1) +
     geom_line(data=predall, aes(x=pAspen, y=fit), colour="blue") +
     geom_line(data=predmax, aes(x=pAspen, y=fit), colour="red")
 
+ggsave(filename = file.path(root, "FIGURES", "QPADPredictions-paspen.jpeg"), width = 6, height = 4)
+
 #COMPARE###
 ests <- data.frame(summary(m1)[["coefficients"]]) %>%
     mutate(model = "Singlevisit",
@@ -174,7 +176,7 @@ ggplot(ests) +
     geom_point(aes(x=variable, y=Estimate, colour=model), position = position_dodge(width = 1)) +
     geom_errorbar(aes(x=variable, ymin=Estimate-1.96*Std..Error, ymax=Estimate+1.96*Std..Error, colour=model), position = position_dodge(width = 1))
 
-
+ggsave(filename = file.path(root, "FIGURES", "QPADCoefficients-paspen.jpeg"), width = 6, height = 4)
 
 
 
